@@ -1,18 +1,17 @@
 const targetPriceService = require("../services/targetPrice.service");
 
-async function create(req, res, next) {
+async function notification(req, res, next) {
   try {
-    const {symbol, tp, sl} = req.body;
+    const { to, symbol, tp, sl } = req.body;
     if (!symbol || !tp || !sl) {
       res.status(400).send("Missing required fields");
     }
     if (isNaN(tp) || isNaN(sl)) {
       res.status(400).send("Take profit and stop loss must be numbers");
     }
-    const data = await targetPriceService.create(symbol, tp, sl);
-    console.log(data);
+    const data = await targetPriceService.create(to, symbol, tp, sl);
     if (data) {
-      res.status(204).send(data);
+      res.status(200).send("Your email has been sent successfully");
     } else {
       res.status(400).send("Failed");
     }
@@ -23,5 +22,5 @@ async function create(req, res, next) {
 }
 
 module.exports = {
-  create,
+  notification,
 };
