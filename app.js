@@ -8,7 +8,6 @@ var cors = require("cors");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var symbolsRouter = require("./routes/symbols");
-var targetPriceRouter = require("./routes/targetPrice");
 var reminderApplicationRouter = require("./routes/reminder-application");
 
 var app = express();
@@ -27,7 +26,6 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/user", usersRouter);
 app.use("/symbol", symbolsRouter);
-app.use("/target-price", targetPriceRouter);
 app.use("/finance-reminder-application", reminderApplicationRouter);
 
 // catch 404 and forward to error handler

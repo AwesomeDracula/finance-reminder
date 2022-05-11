@@ -1,12 +1,20 @@
-const mailer = require("../utils/mailer");
+const targetPriceService = require("../services/targetPrice.service");
 
 async function notification(req, res, next) {
   try {
-    const { to, subject, body } = req.body;
-    await mailer.sendMail(to, subject, body);
-
-    // Quá trình gửi email thành công thì gửi về thông báo success cho người dùng
-    res.send("<h3>Your email has been sent successfully.</h3>");
+    const { to, symbol, tp, sl } = req.body;
+    if (!symbol || !tp || !sl) {
+      res.status(400).send("Missing required fields");
+    }
+    if (isNaN(tp) || isNaN(sl)) {
+      res.status(400).send("Take profit and stop loss must be numbers");
+    }
+    const data = await targetPriceService.create(to, symbol, tp, sl);
+    if (data) {
+      res.status(200).send("Your email has been sent successfully");
+    } else {
+      res.status(400).send("Failed");
+    }
   } catch (err) {
     console.error(`Error while creating target price`, err.message);
     next(err);

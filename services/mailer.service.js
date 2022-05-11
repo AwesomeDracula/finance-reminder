@@ -4,6 +4,9 @@
  */
 const nodeMailer = require("nodemailer");
 
+const subject = "Notification";
+const body = "Hello world";
+
 // Những thông tin dưới đây các bạn có thể ném nó vào biến môi trường env nhé.
 // Vì để demo nên mình để các biến const ở đây.
 const adminEmail = "hadragon02@gmail.com";

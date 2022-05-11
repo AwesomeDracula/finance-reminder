@@ -1,7 +1,12 @@
 const symbolsService = require("./symbols.service");
+const mailer = require("./mailer.service");
 const _ = require("lodash");
 
-async function create(symbol, tp, sl) {
+const body = "Hello world";
+const TP = "Take Profit Now!";
+const SL = "Stop Loss Now!";
+
+async function create(to, symbol, tp, sl) {
   try {
     const symbolIntradayData = await symbolsService.getSymbolIntraday(symbol);
     const metaData = symbolIntradayData["Meta Data"];
@@ -21,12 +26,14 @@ async function create(symbol, tp, sl) {
         ":" +
         currentDate.getMinutes() +
         ":00";
-        console.log(key);
+      console.log(key);
       const data = latestData[key];
       if (tp <= parseFloat(data["4. close"])) {
+        mailer.sendMail(to, TP, body);
         console.log("TP");
         clearInterval(timer);
       } else if (sl >= parseFloat(data["4. close"])) {
+        mailer.sendMail(to, SL, body);
         console.log("SL");
         clearInterval(timer);
       } else {
