@@ -28,6 +28,9 @@ async function create(to, symbol, tp, sl) {
         ":00";
       console.log(key);
       const data = latestData[key];
+      if (!data) {
+        return false;
+      }
       if (tp <= parseFloat(data["4. close"])) {
         mailer.sendMail(to, TP, body);
         console.log("TP");

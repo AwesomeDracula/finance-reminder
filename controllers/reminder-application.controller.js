@@ -11,7 +11,7 @@ async function notification(req, res, next) {
     }
     const data = await targetPriceService.create(to, symbol, tp, sl);
     if (data) {
-      res.status(200).send("Your email has been sent successfully");
+      res.status(200).send(JSON.stringify({message: "Your email has been sent successfully"}));
     } else {
       res.status(400).send("Failed");
     }
