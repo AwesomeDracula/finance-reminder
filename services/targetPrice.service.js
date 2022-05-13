@@ -19,24 +19,26 @@ async function create(to, symbol, tp, sl) {
     ])(series);
     const timer = setInterval(function () {
       const currentDate = new Date();
-      const key =
-        latestDay +
-        " " +
-        currentDate.getHours() +
-        ":" +
-        currentDate.getMinutes() +
-        ":00";
-      console.log(key);
+      let curHour =
+        currentDate.getHours() < 10
+          ? `0${currentDate.getHours()}`
+          : currentDate.getHours();
+      let curMin =
+        currentDate.getMinutes() < 10
+          ? `0${currentDate.getMinutes()}`
+          : currentDate.getMinutes();
+      const key = latestDay + " " + curHour + ":" + curMin + ":00";
       const data = latestData[key];
+      console.log(key, data);
       if (!data) {
         return false;
       }
       if (tp <= parseFloat(data["4. close"])) {
-        mailer.sendMail(to, TP, body);
+        mailer.sendMail(to, TP, `Let's sell now at price ${parseFloat(data["4. close"])} to get profit!`);
         console.log("TP");
         clearInterval(timer);
       } else if (sl >= parseFloat(data["4. close"])) {
-        mailer.sendMail(to, SL, body);
+        mailer.sendMail(to, SL, `Let's sell now at price ${parseFloat(data["4. close"])} to save your money!`);
         console.log("SL");
         clearInterval(timer);
       } else {

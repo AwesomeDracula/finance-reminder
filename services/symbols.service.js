@@ -21,6 +21,8 @@ async function getSymbolIntraday(symbol) {
 
   const data = await doRequest(url);
 
+  console.log(data, 'data')
+
   return data;
 }
 
