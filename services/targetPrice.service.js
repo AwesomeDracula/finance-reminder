@@ -6,7 +6,7 @@ const body = "Hello world";
 const TP = "Take Profit Now!";
 const SL = "Stop Loss Now!";
 
-async function create(to, symbol, tp, sl) {
+async function create(to, symbol, tp, sl, socket) {
   try {
     const symbolIntradayData = await symbolsService.getSymbolIntraday(symbol);
     const metaData = symbolIntradayData["Meta Data"];
@@ -29,17 +29,30 @@ async function create(to, symbol, tp, sl) {
           : currentDate.getMinutes();
       const key = latestDay + " " + curHour + ":" + curMin + ":00";
       const data = latestData[key];
-      console.log(key, data);
       if (!data) {
         return false;
       }
       if (tp <= parseFloat(data["4. close"])) {
-        mailer.sendMail(to, TP, `Let's sell now at price ${parseFloat(data["4. close"])} to get profit!`);
+        mailer.sendMail(
+          to,
+          TP,
+          `Let's sell now at price ${parseFloat(
+            data["4. close"]
+          )} to get profit!`
+        );
         console.log("TP");
+        socket.emit("service", undefined);
         clearInterval(timer);
       } else if (sl >= parseFloat(data["4. close"])) {
-        mailer.sendMail(to, SL, `Let's sell now at price ${parseFloat(data["4. close"])} to save your money!`);
+        mailer.sendMail(
+          to,
+          SL,
+          `Let's sell now at price ${parseFloat(
+            data["4. close"]
+          )} to save your money!`
+        );
         console.log("SL");
+        socket.emit("service", undefined);
         clearInterval(timer);
       } else {
         console.log("Nothing");
@@ -50,8 +63,6 @@ async function create(to, symbol, tp, sl) {
     return false;
   }
 }
-
-function intervalFunc(date, latestData, tp, sl) {}
 
 module.exports = {
   create,
