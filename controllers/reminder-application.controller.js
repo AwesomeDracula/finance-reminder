@@ -9,9 +9,15 @@ async function notification(req, res, next) {
     if (isNaN(tp) || isNaN(sl)) {
       res.status(400).send("Take profit and stop loss must be numbers");
     }
-    const data = await targetPriceService.create(to, symbol, tp, sl);
+    const socket = req.app.get("socketIo");
+    socket.emit("service", "email");
+    const data = await targetPriceService.create(to, symbol, tp, sl, socket);
     if (data) {
-      res.status(200).send(JSON.stringify({message: "Your email has been sent successfully"}));
+      res
+        .status(200)
+        .send(
+          JSON.stringify({ message: "Your email has been sent successfully" })
+        );
     } else {
       res.status(400).send("Failed");
     }

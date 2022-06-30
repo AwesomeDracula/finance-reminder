@@ -1,4 +1,4 @@
-const symbolsService = require('../services/symbols.service');
+const symbolsService = require("../services/symbols.service");
 
 async function searchSymbols(req, res, next) {
   try {
@@ -23,4 +23,4 @@ async function getSymbol(req, res, next) {
 module.exports = {
   searchSymbols,
   getSymbol,
-}
+};

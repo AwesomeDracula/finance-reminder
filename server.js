@@ -26,6 +26,8 @@ const io = new Server(httpServer, {
   },
 });
 
+app.set("socketIo", io);
+
 app.use(cors());
 app.use(bodyParser.json());
 app.use(logger("dev"));
