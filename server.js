@@ -1,27 +1,38 @@
+const express = require("express");
+const { createServer } = require("http");
+const { Server } = require("socket.io");
+var bodyParser = require("body-parser"); // thư viện để đọc body khi user gửi lên
+const cors = require("cors");
+
 var createError = require("http-errors");
-var express = require("express");
-var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
-var cors = require("cors");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var symbolsRouter = require("./routes/symbols");
 var reminderApplicationRouter = require("./routes/reminder-application");
 
-var app = express();
+const PORT = 8080;
 
-// view engine setup
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "jade");
+const app = express();
 
+//khởi tạo Server
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
+
+app.use(cors());
+app.use(bodyParser.json());
 app.use(logger("dev"));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
 app.use("/user", usersRouter);
@@ -44,4 +55,16 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
-module.exports = app;
+//khởi tạo socket
+io.on("connection", (socket) => {
+  console.log("connection: " + socket.id);
+
+  //ngắt kết nối socket
+  socket.on("disconnect", () => {
+    console.log("disconnect: " + socket.id);
+  });
+});
+
+httpServer.listen(PORT, () => {
+  console.log("Hello");
+});
