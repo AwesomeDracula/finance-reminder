@@ -1,12 +1,13 @@
 const symbolsService = require("./symbols.service");
 const mailer = require("./mailer.service");
+const telegram = require("./telegram.service");
 const _ = require("lodash");
 
 const body = "Hello world";
 const TP = "Take Profit Now!";
 const SL = "Stop Loss Now!";
 
-async function create(to, symbol, tp, sl, socket) {
+async function create(to, type, symbol, tp, sl, socket) {
   try {
     const symbolIntradayData = await symbolsService.getSymbolIntraday(symbol);
     const metaData = symbolIntradayData["Meta Data"];
@@ -33,24 +34,43 @@ async function create(to, symbol, tp, sl, socket) {
         return false;
       }
       if (tp <= parseFloat(data["4. close"])) {
-        mailer.sendMail(
-          to,
-          TP,
-          `Let's sell now at price ${parseFloat(
-            data["4. close"]
-          )} to get profit!`
-        );
+        if (type === "telegram") {
+          telegram.sendMessage(
+            to,
+            `Let's sell now at price ${parseFloat(
+              data["4. close"]
+            )} to get profit!`
+          );
+        } else {
+          mailer.sendMail(
+            to,
+            TP,
+            `Let's sell now at price ${parseFloat(
+              data["4. close"]
+            )} to get profit!`
+          );
+        }
         console.log("TP");
         socket.emit("service", undefined);
         clearInterval(timer);
       } else if (sl >= parseFloat(data["4. close"])) {
-        mailer.sendMail(
-          to,
-          SL,
-          `Let's sell now at price ${parseFloat(
-            data["4. close"]
-          )} to save your money!`
-        );
+        if (type === "telegram") {
+          telegram.sendMessage(
+            to,
+            `Let's sell now at price ${parseFloat(
+              data["4. close"]
+            )} to save your money!`
+          );
+        } else {
+          mailer.sendMail(
+            to,
+            SL,
+            `Let's sell now at price ${parseFloat(
+              data["4. close"]
+            )} to save your money!`
+          );
+        }
+
         console.log("SL");
         socket.emit("service", undefined);
         clearInterval(timer);

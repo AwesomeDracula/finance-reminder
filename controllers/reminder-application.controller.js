@@ -2,8 +2,8 @@ const targetPriceService = require("../services/targetPrice.service");
 
 async function notification(req, res, next) {
   try {
-    const { to, symbol, tp, sl } = req.body;
-    if (!symbol || !tp || !sl) {
+    const { to, type, symbol, tp, sl } = req.body;
+    if (!symbol || !tp || !sl || !to || !type) {
       res.status(400).send("Missing required fields");
     }
     if (isNaN(tp) || isNaN(sl)) {
@@ -11,7 +11,7 @@ async function notification(req, res, next) {
     }
     const socket = req.app.get("socketIo");
     socket.emit("service", "email");
-    const data = await targetPriceService.create(to, symbol, tp, sl, socket);
+    const data = await targetPriceService.create(to, type, symbol, tp, sl, socket);
     if (data) {
       res
         .status(200)
