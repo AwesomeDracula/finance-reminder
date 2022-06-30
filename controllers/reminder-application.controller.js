@@ -10,8 +10,19 @@ async function notification(req, res, next) {
       res.status(400).send("Take profit and stop loss must be numbers");
     }
     const socket = req.app.get("socketIo");
-    socket.emit("service", "email");
-    const data = await targetPriceService.create(to, type, symbol, tp, sl, socket);
+    if (type === "email") {
+      socket.emit("service", "email");
+    } else {
+      socket.emit("service", "telegram");
+    }
+    const data = await targetPriceService.create(
+      to,
+      type,
+      symbol,
+      tp,
+      sl,
+      socket
+    );
     if (data) {
       res
         .status(200)
